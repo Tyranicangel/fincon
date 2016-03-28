@@ -1,0 +1,24 @@
+<div class="container-fluid">
+	<div class="row col-md-2">
+		<ul class="nav nav-pills nav-stacked">
+			<li ui-sref-active="active">
+				<a ui-sref="head.main">Home</a>
+			</li>
+			<li ui-sref-active="active">
+				<a ui-sref="head.password">Reset Password</a>
+			</li>
+			<li>
+				<a ng-click="logout()" style="cursor: pointer;">Logout</a>
+			</li>
+		</ul>
+	</div>
+	<div class="row col-md-10">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2"><h3>Welcome</h3></div>
+				<div class="col-md-8"><h3>{{mainuser.name+' : '}} {{mainuser.designation}}</h3></div>
+			</div>
+		</div>
+		<div class="container-fluid" ui-view="content"></div>
+	</div>
+</div>

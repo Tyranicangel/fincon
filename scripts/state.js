@@ -27,5 +27,119 @@ app.config(function($stateProvider,$urlRouterProvider){
 					controller:'AdminMainCtrl'
 				}
 			}
+		}).
+		state('admin.company',{
+			url: '/admin/company',
+			views:{
+				"content":{
+					templateUrl:"partials/admin/company.html",
+					controller:'AdminCompanyCtrl'
+				}
+			}
+		}).
+		state('admin.password',{
+			url: '/admin/password',
+			views:{
+				"content":{
+					templateUrl:"partials/common/password.html",
+					controller:'PasswordCtrl'
+				}
+			}
+		}).
+		state('general',{
+			views:{
+				"main":{
+					templateUrl:"partials/general/common.html",
+					controller:'UserCtrl'
+				}
+			}
+		}).
+		state('general.main',{
+			url: '/general/main',
+			views:{
+				"content":{
+					templateUrl:"partials/general/main.html",
+					controller:'GeneralMainCtrl'
+				}
+			}
+		}).
+		state('general.user',{
+			url: '/general/user',
+			views:{
+				"content":{
+					templateUrl:"partials/general/user.html",
+					controller:'GeneralUserCtrl'
+				}
+			}
+		}).
+		state('general.account',{
+			url: '/general/account',
+			views:{
+				"content":{
+					templateUrl:"partials/general/account.html",
+					controller:'GeneralAccountCtrl'
+				}
+			}
+		}).
+		state('general.password',{
+			url: '/general/password',
+			views:{
+				"content":{
+					templateUrl:"partials/common/password.html",
+					controller:'PasswordCtrl'
+				}
+			}
+		}).
+		state('accounts',{
+			views:{
+				"main":{
+					templateUrl:"partials/accounts/common.html",
+					controller:'UserCtrl'
+				}
+			}
+		}).
+		state('accounts.main',{
+			url: '/accounts/main',
+			views:{
+				"content":{
+					templateUrl:"partials/accounts/main.html",
+					controller:'AccountsMainCtrl'
+				}
+			}
+		}).
+		state('accounts.password',{
+			url: '/accounts/password',
+			views:{
+				"content":{
+					templateUrl:"partials/common/password.html",
+					controller:'PasswordCtrl'
+				}
+			}
+		}).
+		state('head',{
+			views:{
+				"main":{
+					templateUrl:"partials/head/common.html",
+					controller:'UserCtrl'
+				}
+			}
+		}).
+		state('head.main',{
+			url: '/head/main',
+			views:{
+				"content":{
+					templateUrl:"partials/head/main.html",
+					controller:'HeadMainCtrl'
+				}
+			}
+		}).
+		state('head.password',{
+			url: '/head/password',
+			views:{
+				"content":{
+					templateUrl:"partials/common/password.html",
+					controller:'PasswordCtrl'
+				}
+			}
 		});
 });

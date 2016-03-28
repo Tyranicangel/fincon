@@ -8,8 +8,43 @@ use App\User;
 use App\Session;
 use App\Role;
 use Carbon\Carbon;
+use App\Password;
+use DB;
 
 class CommonController extends Controller {
+
+	public function reset_password(){
+		$date=Carbon::now();
+		$tkn=Request::header('JWT-AuthToken');
+		$user=Session::where('token','=',$tkn)->where('expiry','>',$date)->whereHas('users',function($q){
+				$q->where('active','=','1');
+			})->first();
+		$pass=Request::all();
+		if($user->users->password!=hash("sha256",$user->users->username.$pass['old'].'fincon'))
+		{
+			return array('error',"Old password you entered is wrong");
+		}
+		else
+		{
+			DB::beginTransaction();
+			try{
+				$p=new Password;
+				$p->user=$user->users->id;
+				$p->old_password=$user->users->password;
+				$p->new_password=hash("sha256",$user->users->username.$pass['new'].'fincon');
+				$p->change_type="user_update";
+				$p->save();
+				$u=User::where('id','=',$user->users->id)->first();
+				$u->password=hash("sha256",$user->users->username.$pass['new'].'fincon');
+				$u->save();
+			}
+			catch(Exception $e){
+				DB::rollback();
+			}
+			DB::commit();
+			return array("success","Password reset successfully");
+		}
+	}
 
 	public function login(){
 		$date=Carbon::now();
