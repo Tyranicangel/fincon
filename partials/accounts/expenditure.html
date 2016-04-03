@@ -1,0 +1,40 @@
+<div class="container-fluid">
+	<h4>Expenditure</h4>
+	<div class="container-fluid">
+		<table class="table" ng-show="explist.length>0">
+			<thead>
+				<tr>
+					<th>Sno</th>
+					<th>Name</th>
+					<th>Account</th>
+					<th>Type</th>
+					<th>Repeat</th>
+					<th>Interval</th>
+					<th>Next Slot</th>
+					<th>Amount</th>
+					<th>Edit</th>
+					<th>Active</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="exp in explist">
+					<td>{{$index+1}}</td>
+					<td>{{exp.name}}</td>
+					<td>{{exp.accountdet.name}}</td>
+					<td>{{exp.typedet.type}}</td>
+					<td>{{exp.repeat_type}}</td>
+					<td>{{exp.interval_slot}}</td>
+					<td>{{exp.next_slot}}</td>
+					<td>{{exp.amount}}</td>
+					<td><a ui-sref="accounts.expupdate({id:exp.id})" class="btn btn-primary btn-xs">Edit</button></td>
+					<td ng-if="exp.active==1"><button class="btn btn-warning btn-xs" ng-click="deactivate(exp)">Deactivate</button></td>
+					<td ng-if="exp.active!=1"><button class="btn btn-success btn-xs" ng-click="activate(exp)">Activate</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<span class="label label-warning" ng-show="explist.length==0">There are no expenditues added</span>
+		<br>
+		<br>
+		<a ui-sref="accounts.expupdate({id:'0'})" class="btn btn-primary">Add</a>
+	</div>
+</div>

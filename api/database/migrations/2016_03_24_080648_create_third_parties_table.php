@@ -20,7 +20,8 @@ class CreateThirdPartiesTable extends Migration {
 			$table->foreign('created_by')->references('id')->on('users');
 			$table->integer('active')->unsigned()->default(1);
 			$table->string('name',100);
-			$table->text('address');
+			$table->text('description');
+			$table->integer('type')->unsigned();
 			$table->integer('company')->unsigned();
 			$table->foreign('company')->references('id')->on('companies');
 		});

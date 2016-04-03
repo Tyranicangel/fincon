@@ -2,6 +2,150 @@ app.controller('GeneralMainCtrl', ['$scope', function($scope){
 	
 }]);
 
+app.controller('GeneralIncometypeCtrl', ['$scope','$rootScope','$http', function($scope,$rootScope,$http){
+	$rootScope.showloader=true;
+	$http({
+		method:'GET',
+		url:$rootScope.apiend+'get_income_types',
+		headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')}
+	}).success(function(result){
+		$rootScope.showloader=false;
+		$scope.types=result;
+	});
+
+	$scope.create=function(){
+		$scope.maintype={};
+		$('#modal').modal('show');
+	}
+
+	$scope.edit=function(type){
+		$scope.type={};
+		$scope.maintype=angular.copy(type);
+		$('#modal').modal('show');
+	}
+
+	$scope.deactivate=function(type){
+		$rootScope.showloader=true;
+		$http({
+			method:'POST',
+			url:$rootScope.apiend+'deactivate_income_type',
+			headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+			data:{type_id:type.id}
+		}).success(function(result){
+			$rootScope.showloader=false;
+			$scope.types=result;
+		});
+	}
+
+	$scope.activate=function(type){
+		$rootScope.showloader=true;
+		$http({
+			method:'POST',
+			url:$rootScope.apiend+'activate_income_type',
+			headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+			data:{type_id:type.id}
+		}).success(function(result){
+			$rootScope.showloader=false;
+			$scope.types=result;
+		});
+	}
+
+	$scope.save=function(){
+		$rootScope.showloader=true;
+		$http({
+			method:'POST',
+			url:$rootScope.apiend+'save_income_type',
+			headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+			data:$scope.maintype
+		}).success(function(result){
+			$rootScope.showloader=false;
+			if(result[0]=="success")
+			{
+				swal("Income type saved");
+				$scope.types=result[1];
+				$scope.maintype={};
+				$('#modal').modal('hide');
+			}
+			else
+			{
+				swal(result[1]);
+			}
+		});
+	}
+}]);
+
+app.controller('GeneralExptypeCtrl', ['$scope','$rootScope','$http', function($scope,$rootScope,$http){
+	$rootScope.showloader=true;
+	$http({
+		method:'GET',
+		url:$rootScope.apiend+'get_exp_types',
+		headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')}
+	}).success(function(result){
+		$rootScope.showloader=false;
+		$scope.types=result;
+	});
+
+	$scope.create=function(){
+		$scope.maintype={};
+		$('#modal').modal('show');
+	}
+
+	$scope.edit=function(type){
+		$scope.type={};
+		$scope.maintype=angular.copy(type);
+		$('#modal').modal('show');
+	}
+
+	$scope.deactivate=function(type){
+		$rootScope.showloader=true;
+		$http({
+			method:'POST',
+			url:$rootScope.apiend+'deactivate_exp_type',
+			headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+			data:{type_id:type.id}
+		}).success(function(result){
+			$rootScope.showloader=false;
+			$scope.types=result;
+		});
+	}
+
+	$scope.activate=function(type){
+		$rootScope.showloader=true;
+		$http({
+			method:'POST',
+			url:$rootScope.apiend+'activate_exp_type',
+			headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+			data:{type_id:type.id}
+		}).success(function(result){
+			$rootScope.showloader=false;
+			$scope.types=result;
+		});
+	}
+
+	$scope.save=function(){
+		$rootScope.showloader=true;
+		$http({
+			method:'POST',
+			url:$rootScope.apiend+'save_exp_type',
+			headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+			data:$scope.maintype
+		}).success(function(result){
+			$rootScope.showloader=false;
+			if(result[0]=="success")
+			{
+				swal("Expenditure type saved");
+				$scope.types=result[1];
+				$scope.maintype={};
+				$('#modal').modal('hide');
+			}
+			else
+			{
+				swal(result[1]);
+			}
+		});
+	}
+}]);
+
 app.controller('GeneralAccountCtrl', ['$scope','$rootScope','$http', function($scope,$rootScope,$http){
 	$rootScope.showloader=true;
 	$http({

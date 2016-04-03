@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateIncomeSourceUpdatesTable extends Migration {
+class CreateExpTypeUpdatesTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,17 +12,16 @@ class CreateIncomeSourceUpdatesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('income_source_updates', function(Blueprint $table)
+		Schema::create('exp_type_updates', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->timestamps();
+			$table->string('type',100);
 			$table->integer('updated_by')->unsigned();
 			$table->foreign('updated_by')->references('id')->on('users');
-			$table->integer('income_source')->unsigned();
-			$table->foreign('income_source')->references('id')->on('income_sources');
-			$table->text('remarks');
-			$table->decimal('amount',20,2);
 			$table->integer('active')->unsigned();
+			$table->integer('exp_type')->unsigned();
+			$table->foreign('exp_type')->references('id')->on('exp_types');
 		});
 	}
 
@@ -33,7 +32,7 @@ class CreateIncomeSourceUpdatesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('income_source_updates');
+		Schema::drop('exp_type_updates');
 	}
 
 }

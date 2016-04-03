@@ -21,10 +21,16 @@ class CreateTransactionUpdatesTable extends Migration {
 			$table->integer('active')->unsigned()->default(1);
 			$table->integer('account')->unsigned();
 			$table->foreign('account')->references('id')->on('accounts');
+			$table->string('name',100);
+			$table->integer('income_type')->unsigned();
+			$table->integer('exp_type')->unsigned();
 			$table->decimal('amount',20,2);
+			// $table->decimal('partial',20,2);
+			// $table->decimal('remainder',20,2);
 			$table->integer('type')->unsigned();
 			$table->integer('expenditure')->unsigned();
 			$table->integer('income')->unsigned();
+			$table->date('duedate');
 			$table->integer('transaction')->unsigned();
 			$table->foreign('transaction')->references('id')->on('transactions');
 		});

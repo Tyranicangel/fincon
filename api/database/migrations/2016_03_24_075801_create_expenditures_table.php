@@ -19,16 +19,17 @@ class CreateExpendituresTable extends Migration {
 			$table->integer('created_by')->unsigned();
 			$table->foreign('created_by')->references('id')->on('users');
 			$table->integer('active')->unsigned()->default(1);
+			$table->string('name',100);
+			$table->integer('company')->unsigned();
+			$table->foreign('company')->references('id')->on('companies');
 			$table->integer('account')->unsigned();
 			$table->foreign('account')->references('id')->on('accounts');
 			$table->integer('type')->unsigned();
-			$table->integer('repeat')->unsigned();
-			$table->string('interval',100);
-			$table->date('duedate');
-			$table->integer('status')->unsigned();
+			$table->foreign('type')->references('id')->on('exp_types');
+			$table->string('repeat_type',100);
+			$table->string('interval_slot',100);
+			$table->date('next_slot');
 			$table->decimal('amount',20,2);
-			$table->decimal('paid',20,2);
-			$table->decimal('left',20,2);
 		});
 	}
 

@@ -23,6 +23,9 @@ class CreateAccountsTable extends Migration {
 			$table->foreign('company')->references('id')->on('companies');
 			$table->string('name',100);
 			$table->decimal('number',20,0)->default(0);
+			$table->string('bank',100);
+			$table->string('branch',100);
+			$table->string('ifsc',20);
 			$table->decimal('obalance',20,2);
 			$table->decimal('balance',20,2);
 			$table->decimal('expenditure',20,2);

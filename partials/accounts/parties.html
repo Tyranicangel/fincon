@@ -1,0 +1,74 @@
+<div class="container-fluid">
+	<h4>Parties</h4>
+	<div class="container-fluid">
+		<input type="text" class="form-control" placeholder="Search" ng-show="parties.length>0" ng-model="search">
+		<table class="table" ng-show="parties.length>0">
+			<thead>
+				<tr>
+					<th>Sno</th>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Type</th>
+					<th>Edit</th>
+					<th>Active</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="party in parties | filter:search">
+					<td>{{$index+1}}</td>
+					<td>{{party.name}}</td>
+					<td>{{party.description}}</td>
+					<td ng-if="party.type==1">External Party</td>
+					<td ng-if="party.type==2">Government Body</td>
+					<td ng-if="party.type==3">Employee</td>
+					<td ng-if="party.type==4">Company Party</td>
+					<td ng-if="party.type==5">Miscellaneous</td>
+					<td><button ng-click="edit(party)" class="btn btn-primary btn-xs">Edit</button></td>
+					<td ng-if="party.active==1"><button class="btn btn-warning btn-xs" ng-click="deactivate(party)">Deactivate</button></td>
+					<td ng-if="party.active!=1"><button class="btn btn-success btn-xs" ng-click="activate(party)">Activate</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<span class="label label-warning" ng-show="parties.length==0">There are no parties added</span>
+		<br>
+		<br>
+		<button ng-click="create()" class="btn btn-primary">Add</button>
+	</div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form ng-submit="save()">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Party</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Name</label>
+						<input type="text" class="form-control" ng-model="mainparty.name" required>
+					</div>
+					<div class="form-group">
+						<label>Description</label>
+						<textarea class="form-control" ng-model="mainparty.description" required></textarea>
+					</div>
+					<div class="form-group">
+						<label>Type</label>
+						<select class="form-control" ng-model="mainparty.type" required>
+							<option value="">Select</option>
+							<option value="1">External Party</option>
+							<option value="2">Government Body</option>
+							<option value="3">Employee</option>
+							<option value="4">Company Party</option>
+							<option value="5">Miscellaneous</option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

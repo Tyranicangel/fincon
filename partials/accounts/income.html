@@ -1,0 +1,40 @@
+<div class="container-fluid">
+	<h4>Income</h4>
+	<div class="container-fluid">
+		<table class="table" ng-show="incomelist.length>0">
+			<thead>
+				<tr>
+					<th>Sno</th>
+					<th>Name</th>
+					<th>Account</th>
+					<th>Type</th>
+					<th>Repeat</th>
+					<th>Interval</th>
+					<th>Next Slot</th>
+					<th>Amount</th>
+					<th>Edit</th>
+					<th>Active</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="income in incomelist">
+					<td>{{$index+1}}</td>
+					<td>{{income.name}}</td>
+					<td>{{income.accountdet.name}}</td>
+					<td>{{income.typedet.type}}</td>
+					<td>{{income.repeat_type}}</td>
+					<td>{{income.interval_slot}}</td>
+					<td>{{income.next_slot}}</td>
+					<td>{{income.amount}}</td>
+					<td><a ui-sref="accounts.incomeupdate({id:income.id})" class="btn btn-primary btn-xs">Edit</button></td>
+					<td ng-if="income.active==1"><button class="btn btn-warning btn-xs" ng-click="deactivate(income)">Deactivate</button></td>
+					<td ng-if="income.active!=1"><button class="btn btn-success btn-xs" ng-click="activate(income)">Activate</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<span class="label label-warning" ng-show="incomelist.length==0">There are no incomes added</span>
+		<br>
+		<br>
+		<a ui-sref="accounts.incomeupdate({id:'0'})" class="btn btn-primary">Add</a>
+	</div>
+</div>

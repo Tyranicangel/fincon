@@ -81,6 +81,24 @@ app.config(function($stateProvider,$urlRouterProvider){
 				}
 			}
 		}).
+		state('general.exptype',{
+			url: '/general/exptype',
+			views:{
+				"content":{
+					templateUrl:"partials/general/exptype.html",
+					controller:'GeneralExptypeCtrl'
+				}
+			}
+		}).
+		state('general.incometype',{
+			url: '/general/incometype',
+			views:{
+				"content":{
+					templateUrl:"partials/general/incometype.html",
+					controller:'GeneralIncometypeCtrl'
+				}
+			}
+		}).
 		state('general.password',{
 			url: '/general/password',
 			views:{
@@ -104,6 +122,69 @@ app.config(function($stateProvider,$urlRouterProvider){
 				"content":{
 					templateUrl:"partials/accounts/main.html",
 					controller:'AccountsMainCtrl'
+				}
+			}
+		}).
+		state('accounts.parties',{
+			url: '/accounts/parties',
+			views:{
+				"content":{
+					templateUrl:"partials/accounts/parties.html",
+					controller:'AccountsPartiesCtrl'
+				}
+			}
+		}).
+		state('accounts.sources',{
+			url: '/accounts/sources',
+			views:{
+				"content":{
+					templateUrl:"partials/accounts/sources.html",
+					controller:'AccountsSourcesCtrl'
+				}
+			}
+		}).
+		state('accounts.expenditure',{
+			url: '/accounts/expenditure',
+			views:{
+				"content":{
+					templateUrl:"partials/accounts/expenditure.html",
+					controller:'AccountsExpenditureCtrl'
+				}
+			}
+		}).
+		state('accounts.expupdate',{
+			url: '/accounts/expupdate/:id',
+			views:{
+				"content":{
+					templateUrl:"partials/accounts/expupdate.html",
+					controller:'AccountsExpUpdateCtrl'
+				}
+			}
+		}).
+		state('accounts.income',{
+			url: '/accounts/income',
+			views:{
+				"content":{
+					templateUrl:"partials/accounts/income.html",
+					controller:'AccountsIncomeCtrl'
+				}
+			}
+		}).
+		state('accounts.incomeupdate',{
+			url: '/accounts/incomeupdate/:id',
+			views:{
+				"content":{
+					templateUrl:"partials/accounts/incomeupdate.html",
+					controller:'AccountsIncomeUpdateCtrl'
+				}
+			}
+		}).
+		state('accounts.transactions',{
+			url: '/accounts/transactions',
+			views:{
+				"content":{
+					templateUrl:"partials/accounts/transactions.html",
+					controller:'AccountsTransactionsCtrl'
 				}
 			}
 		}).

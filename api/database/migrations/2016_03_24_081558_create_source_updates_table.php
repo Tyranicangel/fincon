@@ -20,6 +20,7 @@ class CreateSourceUpdatesTable extends Migration {
 			$table->foreign('updated_by')->references('id')->on('users');
 			$table->integer('active')->unsigned();
 			$table->string('name',100);
+			$table->text('description');
 			$table->integer('type')->unsigned();
 			$table->integer('source')->unsigned();
 			$table->foreign('source')->references('id')->on('sources');

@@ -18,9 +18,10 @@ class CreateThirdPartyUpdatesTable extends Migration {
 			$table->timestamps();
 			$table->integer('updated_by')->unsigned();
 			$table->foreign('updated_by')->references('id')->on('users');
-			$table->integer('active')->unsigned()->default(1);
+			$table->integer('active')->unsigned();
 			$table->string('name',100);
-			$table->text('address');
+			$table->text('description');
+			$table->integer('type')->unsigned();
 			$table->integer('third_party')->unsigned();
 			$table->foreign('third_party')->references('id')->on('third_parties');
 		});

@@ -1,0 +1,74 @@
+<div class="container-fluid">
+	<h4>Sources</h4>
+	<div class="container-fluid">
+		<input type="text" class="form-control" placeholder="Search" ng-show="sources.length>0" ng-model="search">
+		<table class="table" ng-show="sources.length>0">
+			<thead>
+				<tr>
+					<th>Sno</th>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Type</th>
+					<th>Edit</th>
+					<th>Active</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="source in sources | filter:search">
+					<td>{{$index+1}}</td>
+					<td>{{source.name}}</td>
+					<td>{{source.description}}</td>
+					<td ng-if="source.type==1">External Source</td>
+					<td ng-if="source.type==2">Government Body</td>
+					<td ng-if="source.type==3">Employee</td>
+					<td ng-if="source.type==4">Company Source</td>
+					<td ng-if="source.type==5">Miscellaneous</td>
+					<td><button ng-click="edit(source)" class="btn btn-primary btn-xs">Edit</button></td>
+					<td ng-if="source.active==1"><button class="btn btn-warning btn-xs" ng-click="deactivate(source)">Deactivate</button></td>
+					<td ng-if="source.active!=1"><button class="btn btn-success btn-xs" ng-click="activate(source)">Activate</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<span class="label label-warning" ng-show="sources.length==0">There are no sources added</span>
+		<br>
+		<br>
+		<button ng-click="create()" class="btn btn-primary">Add</button>
+	</div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form ng-submit="save()">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Source</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Name</label>
+						<input type="text" class="form-control" ng-model="mainsource.name" required>
+					</div>
+					<div class="form-group">
+						<label>Description</label>
+						<textarea class="form-control" ng-model="mainsource.description" required></textarea>
+					</div>
+					<div class="form-group">
+						<label>Type</label>
+						<select class="form-control" ng-model="mainsource.type" required>
+							<option value="">Select</option>
+							<option value="1">External Source</option>
+							<option value="2">Government Body</option>
+							<option value="3">Employee</option>
+							<option value="4">Company Source</option>
+							<option value="5">Miscellaneous</option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

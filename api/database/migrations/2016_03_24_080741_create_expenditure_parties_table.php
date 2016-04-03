@@ -20,12 +20,11 @@ class CreateExpenditurePartiesTable extends Migration {
 			$table->foreign('created_by')->references('id')->on('users');
 			$table->integer('expenditure')->unsigned();
 			$table->foreign('expenditure')->references('id')->on('expenditures');
-			$table->integer('acno')->unsigned();
+			$table->integer('third_party')->unsigned();
+			$table->foreign('third_party')->references('id')->on('third_parties');
 			$table->text('remarks');
 			$table->decimal('amount',20,2);
-			$table->decimal('paid',20,2);
-			$table->decimal('left',20,2);
-			$table->integer('status')->unsigned();
+			$table->integer('active')->unsigned()->default(1);
 		});
 	}
 

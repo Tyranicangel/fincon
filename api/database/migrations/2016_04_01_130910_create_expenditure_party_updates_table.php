@@ -20,10 +20,9 @@ class CreateExpenditurePartyUpdatesTable extends Migration {
 			$table->foreign('updated_by')->references('id')->on('users');
 			$table->integer('expenditure_party')->unsigned();
 			$table->foreign('expenditure_party')->references('id')->on('expenditure_parties');
+			$table->text('remarks');
 			$table->decimal('amount',20,2);
-			$table->decimal('paid',20,2);
-			$table->decimal('left',20,2);
-			$table->integer('status')->unsigned();
+			$table->integer('active')->unsigned();
 		});
 	}
 

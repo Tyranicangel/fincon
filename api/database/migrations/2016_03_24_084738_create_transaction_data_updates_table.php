@@ -20,7 +20,11 @@ class CreateTransactionDataUpdatesTable extends Migration {
 			$table->foreign('updated_by')->references('id')->on('users');
 			$table->integer('source')->unsigned();
 			$table->integer('party')->unsigned();
+			$table->text('remarks');
 			$table->decimal('amount',20,2);
+			// $table->decimal('partial',20,2);
+			// $table->decimal('remainder',20,2);
+			$table->integer('active')->unsigned();
 			$table->integer('transaction_data')->unsigned();
 			$table->foreign('transaction_data')->references('id')->on('transaction_datas');
 		});
