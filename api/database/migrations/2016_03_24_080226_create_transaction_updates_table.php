@@ -31,6 +31,7 @@ class CreateTransactionUpdatesTable extends Migration {
 			$table->integer('expenditure')->unsigned();
 			$table->integer('income')->unsigned();
 			$table->date('duedate');
+			$table->text('remarks');
 			$table->integer('transaction')->unsigned();
 			$table->foreign('transaction')->references('id')->on('transactions');
 		});

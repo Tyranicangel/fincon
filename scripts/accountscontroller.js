@@ -2,8 +2,177 @@ app.controller('AccountsMainCtrl', ['$scope', function($scope){
 	
 }]);
 
-app.controller('AccountsTransactionsCtrl', ['$scope', function($scope){
-	
+app.controller('AccountsTransactionUpdateCtrl', ['$scope','$rootScope','$http','$stateParams','$state', function($scope,$rootScope,$http,$stateParams,$state){
+	$rootScope.showloader=true;
+	$scope.dlist=[];
+	$http({
+		method:'GET',
+		url:$rootScope.apiend+'get_transaction_details',
+		headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+		params:{id:$stateParams.id}
+	}).success(function(result){
+		$rootScope.showloader=false;
+		$scope.exptypes=result[0];
+		$scope.incometypes=result[1];
+		$scope.accounts=result[2];
+		$scope.sources=result[3];
+		$scope.parties=result[4];
+		if($stateParams.id==0)
+		{
+			$scope.transaction={};
+		}
+		else
+		{
+			result[5]['duedate']=new Date(result[5]['duedate']);
+			$scope.transaction=result[5];
+			$scope.dlist=result[6];
+		}
+	});
+
+	$scope.save_transaction=function(){
+		$rootScope.showloader=true;
+		$http({
+			method:'POST',
+			url:$rootScope.apiend+'save_transaction',
+			headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+			data:$scope.transaction
+		}).success(function(result){
+			$rootScope.showloader=false;
+			$state.go('accounts.transactions');
+		});
+	}
+
+	$scope.change_type=function(){
+		delete $scope.transaction.details;
+		$scope.dlist=[];
+	}
+
+	$scope.adddetail=function(){
+		$scope.maindetail={};
+		$('#modal').modal('show');
+	}
+
+	$scope.detailfilter=function(a){
+		if($scope.dlist.indexOf(a.id)>=0)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	$scope.removedetail=function(i){
+		if($scope.transaction.type==1)
+		{
+			$scope.dlist.splice($scope.dlist.indexOf($scope.transaction.details[i].source),1);
+		}
+		else
+		{
+			$scope.dlist.splice($scope.dlist.indexOf($scope.transaction.details[i].party),1);
+		}
+		$scope.transaction.details.splice(i,1);
+	}
+
+	$scope.transactionamount=function(){
+		var sum=0;
+		if($scope.transaction && $scope.transaction.details)
+		{
+			for(var i=0;i<$scope.transaction.details.length;i++)
+			{
+				sum=sum+Number($scope.transaction.details[i].amount);
+			}
+		}
+		return sum;
+	}
+
+	$scope.editdetail=function(detail){
+		$scope.maindetail=angular.copy(detail);
+		$('#modal').modal('show');
+	}
+
+	$scope.save=function(){
+		if($scope.maindetail.id)
+		{
+			for(var i=0;i<$scope.transaction.details.length;i++)
+			{
+				if($scope.transaction.details[i].id==$scope.maindetail.id)
+				{
+					$scope.transaction.details[i]=angular.copy($scope.maindetail);
+				}
+			}
+		}
+		else
+		{
+			sdet=angular.copy($scope.maindetail);
+			if($scope.transaction.type==1)
+			{
+				for(var i=0;i<$scope.parties.length;i++)
+				{
+					if($scope.parties[i].id==sdet['party'])
+					{
+						sdet['partydets']=angular.copy($scope.parties[i]);
+					}
+				}
+				$scope.dlist.push(angular.copy($scope.maindetail.party));
+			}
+			else
+			{
+				for(var i=0;i<$scope.sources.length;i++)
+				{
+					if($scope.sources[i].id==sdet['source'])
+					{
+						sdet['sourcedets']=angular.copy($scope.sources[i]);
+					}
+				}
+				$scope.dlist.push(angular.copy($scope.maindetail.source));
+			}
+			if(!$scope.transaction.details)
+			{
+				$scope.transaction.details=[];
+			}
+			$scope.transaction.details.push(sdet);
+			$scope.maindetail={};
+		}
+		$('#modal').modal('hide');
+	}
+
+}]);
+
+app.controller('AccountsTransactionsCtrl', ['$scope','$rootScope','$http', function($scope,$rootScope,$http){
+	$rootScope.showloader=true;
+	$http({
+		method:'GET',
+		url:$rootScope.apiend+'get_transaction_list',
+		headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')}
+	}).success(function(result){
+		$rootScope.showloader=false;
+		$scope.translist=result;
+	});
+
+	$scope.deactivate=function(trans){
+		$rootScope.showloader=true;
+		$http({
+			method:'POST',
+			url:$rootScope.apiend+'deactivate_transaction',
+			headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+			data:{trans_id:trans.id}
+		}).success(function(result){
+			$rootScope.showloader=false;
+			$scope.translist=result;
+		});
+	}
+
+	$scope.activate=function(trans){
+		$rootScope.showloader=true;
+		$http({
+			method:'POST',
+			url:$rootScope.apiend+'activate_transaction',
+			headers:{'JWT-AuthToken':localStorage.getItem('fincontoken')},
+			data:{trans_id:trans.id}
+		}).success(function(result){
+			$rootScope.showloader=false;
+			$scope.translist=result;
+		});
+	}
 }]);
 
 app.controller('AccountsIncomeUpdateCtrl', ['$scope','$rootScope','$http','$stateParams','$state', function($scope,$rootScope,$http,$stateParams,$state){
@@ -96,7 +265,7 @@ app.controller('AccountsIncomeUpdateCtrl', ['$scope','$rootScope','$http','$stat
 			{
 				if($scope.sources[i].id==sdet['source'])
 				{
-					sdet['partydets']=angular.copy($scope.sources[i]);
+					sdet['sourcedets']=angular.copy($scope.sources[i]);
 				}
 			}
 			if(!$scope.income.sources)

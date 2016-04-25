@@ -3,82 +3,60 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use Illuminate\Http\Request;
+use Request;
+use DB;
+use App\User;
+use App\Session;
+use App\Transaction;
+use App\Account;
+use Carbon\Carbon;
 
 class HeadController extends Controller {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		//
+	public function get_approval_list(){
+		$tkn=Request::header('JWT-AuthToken');
+		$date=Carbon::now();
+		$admin=Session::where('token','=',$tkn)->where('expiry','>',$date)->whereHas('users',function($q){
+				$q->where('active','=','1');
+			})->first();
+		return Transaction::where('company','=',$admin->users->company)->with('accountdet')->with('incometypedet')->with('exptypedet')->with(array('details'=>function($query){
+					$query->where('active','=',1)->with('sourcedets')->with('partydets');
+				}))->where('status','=',1)->orderBy('duedate')->get();
 	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
+	public function approve_trans(){
+		$tkn=Request::header('JWT-AuthToken');
+		$date=Carbon::now();
+		$admin=Session::where('token','=',$tkn)->where('expiry','>',$date)->whereHas('users',function($q){
+				$q->where('active','=','1');
+			})->first();
+		DB::beginTransaction();
+		try{
+			$trans=Transaction::where('id','=',Request::get('transid'))->first();
+			$trans->approved_on=$date;
+			$trans->status=2;
+			$trans->save();
+			$account=Account::where('id','=',$trans->account)->first();
+			if($trans->type=='1')
+			{
+				$account->expenditure=$account->expenditure+$trans->amount;
+				$account->balance=$account->balance-$trans->amount;
+			}
+			else
+			{
+				$account->income=$account->income+$trans->amount;
+				$account->balance=$account->balance+$trans->amount;
+			}
+			$account->save();
+		}
+		catch(Exception $e){
+			DB::rollback();
+		}
+		DB::commit();
+		return Transaction::where('company','=',$admin->users->company)->with('accountdet')->with('incometypedet')->with('exptypedet')->with(array('details'=>function($query){
+					$query->where('active','=',1)->with('sourcedets')->with('partydets');
+				}))->where('status','=',1)->orderBy('duedate')->get();
 	}
 
 }

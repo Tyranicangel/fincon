@@ -23,9 +23,341 @@ use App\Income;
 use App\IncomeSource;
 use App\IncomeUpdate;
 use App\IncomeSourceUpdate;
+use App\Transaction;
+use App\TransactionUpdate;
+use App\TransactionData;
+use App\TransactionDataUpdate;
 use Carbon\Carbon;
 
 class AccountsController extends Controller {
+
+	public function activate_transaction(){
+		$tid=Request::get('trans_id');
+		$tkn=Request::header('JWT-AuthToken');
+		$date=Carbon::now();
+		$admin=Session::where('token','=',$tkn)->where('expiry','>',$date)->whereHas('users',function($q){
+				$q->where('active','=','1');
+			})->first();
+		DB::beginTransaction();
+		try{
+			$t=Transaction::where('id','=',$tid)->first();
+			$tu=new TransactionUpdate;
+			$tu->updated_by=$admin->users->id;
+			$tu->name=$t->name;
+			$tu->account=$t->account;
+			$tu->type=$t->type;
+			$tu->income_type=$t->income_type;
+			$tu->exp_type=$t->exp_type;
+			$tu->amount=$t->amount;
+			$tu->expenditure=$t->expenditure;
+			$tu->income=$t->income;
+			$tu->duedate=$t->duedate;
+			$tu->remarks=$t->remarks;
+			$tu->active=$t->active;
+			$tu->transaction=$t->id;
+			$tu->save();
+			$t->active=1;
+			$t->save();
+		}
+		catch(Exception $e){
+			DB::rollback();
+		}
+		DB::commit();
+		return Transaction::where('company','=',$admin->users->company)->with('accountdet')->with('incometypedet')->with('exptypedet')->where('status','=',1)->get();
+	}
+
+	public function deactivate_transaction(){
+		$tid=Request::get('trans_id');
+		$tkn=Request::header('JWT-AuthToken');
+		$date=Carbon::now();
+		$admin=Session::where('token','=',$tkn)->where('expiry','>',$date)->whereHas('users',function($q){
+				$q->where('active','=','1');
+			})->first();
+		DB::beginTransaction();
+		try{
+			$t=Transaction::where('id','=',$tid)->first();
+			$tu=new TransactionUpdate;
+			$tu->updated_by=$admin->users->id;
+			$tu->name=$t->name;
+			$tu->account=$t->account;
+			$tu->type=$t->type;
+			$tu->income_type=$t->income_type;
+			$tu->exp_type=$t->exp_type;
+			$tu->amount=$t->amount;
+			$tu->expenditure=$t->expenditure;
+			$tu->income=$t->income;
+			$tu->duedate=$t->duedate;
+			$tu->remarks=$t->remarks;
+			$tu->active=$t->active;
+			$tu->transaction=$t->id;
+			$tu->save();
+			$t->active=0;
+			$t->save();
+		}
+		catch(Exception $e){
+			DB::rollback();
+		}
+		DB::commit();
+		return Transaction::where('company','=',$admin->users->company)->with('accountdet')->with('incometypedet')->with('exptypedet')->where('status','=',1)->get();
+	}
+
+	public function get_transaction_list(){
+		$tkn=Request::header('JWT-AuthToken');
+		$date=Carbon::now();
+		$admin=Session::where('token','=',$tkn)->where('expiry','>',$date)->whereHas('users',function($q){
+				$q->where('active','=','1');
+			})->first();
+		return Transaction::where('company','=',$admin->users->company)->with('accountdet')->with('incometypedet')->with('exptypedet')->where('status','=',1)->get();
+	}
+
+	public function save_transaction(){
+		$tkn=Request::header('JWT-AuthToken');
+		$date=Carbon::now();
+		$admin=Session::where('token','=',$tkn)->where('expiry','>',$date)->whereHas('users',function($q){
+				$q->where('active','=','1');
+			})->first();
+		$trans=Request::all();
+		if(array_key_exists('id',$trans))
+		{
+			DB::beginTransaction();
+			try{
+				$t=Transaction::where('id','=',$trans['id'])->with('details')->first();
+				$tu=new TransactionUpdate;
+				$tu->updated_by=$admin->users->id;
+				$tu->name=$t->name;
+				$tu->account=$t->account;
+				$tu->type=$t->type;
+				$tu->income_type=$t->income_type;
+				$tu->exp_type=$t->exp_type;
+				$tu->amount=$t->amount;
+				$tu->expenditure=$t->expenditure;
+				$tu->income=$t->income;
+				$tu->duedate=$t->duedate;
+				$tu->remarks=$t->remarks;
+				$tu->active=$t->active;
+				$tu->transaction=$t->id;
+				$tu->save();
+				$t->name=$trans['name'];
+				$t->account=$trans['account'];
+				$t->type=$trans['type'];
+				$t->status=1;
+				$t->remarks=$trans['remarks'];
+				if($trans['type']=='1')
+				{
+					$t->exp_type=$trans['exp_type'];
+				}
+				else
+				{
+					$t->income_type=$trans['income_type'];
+				}
+				$t->duedate=$trans['duedate'];
+				$t->amount=0;
+				$t->save();
+				$sum=0;
+				$tlist=array();
+				for($j=0;$j<count($trans['details']);$j++)
+				{
+					if($trans['type']=='1')
+					{
+						$td=TransactionData::where('transaction','=',$t->id)->where('party','=',$trans['details'][$j]['party'])->first();
+					}
+					else
+					{
+						$td=TransactionData::where('transaction','=',$t->id)->where('source','=',$trans['details'][$j]['source'])->first();
+					}
+					if($td)
+					{
+						$tdu=new TransactionDataUpdate;
+						$tdu->source=$td->source;
+						$tdu->party=$td->party;
+						$tdu->updated_by=$admin->users->id;
+						$tdu->remarks=$td->remarks;
+						$tdu->amount=$td->amount;
+						$tdu->active=$td->active;
+						$tdu->transaction_data=$td->id;
+						$tdu->save();
+						$td->remarks=
+						$td->amount=
+						$td->active=1;
+						$td->save();
+						$td->amount=$trans['details'][$j]['amount'];
+						$td->remarks=$trans['details'][$j]['remarks'];
+						$sum+=$trans['details'][$j]['amount'];
+						if($trans['type']==1)
+						{
+							array_push($tlist,$td->party);
+						}
+						else
+						{
+							array_push($tlist,$td->source);
+						}
+					}
+					else
+					{
+						$td=new TransactionData;
+						$td->created_by=$admin->users->id;
+						$td->transaction=$t->id;
+						if($trans['type']==1)
+						{
+							$td->party=$trans['details'][$j]['party'];
+							array_push($tlist,$td->party);
+						}
+						else
+						{
+							$td->source=$trans['details'][$j]['source'];
+							array_push($tlist,$td->source);
+						}
+						$td->amount=$trans['details'][$j]['amount'];
+						$td->remarks=$trans['details'][$j]['remarks'];
+						$sum+=$trans['details'][$j]['amount'];
+						$td->save();
+					}
+				}
+				$t->amount=$sum;
+				$t->save();
+				$tdlist=TransactionData::where('transaction','=',$t->id)->get()->toArray();
+				for($j=0;$j<count($tdlist);$j++)
+				{
+					if($trans['type']==1)
+					{
+						if(in_array($tdlist[$j]['party'], $tlist))
+						{
+
+						}
+						else
+						{
+							$td=TransactionData::where('id','=',$tdlist[$j]['id'])->first();
+							$tdu=new TransactionDataUpdate;
+							$tdu->source=$td->source;
+							$tdu->party=$td->party;
+							$tdu->updated_by=$admin->users->id;
+							$tdu->remarks=$td->remarks;
+							$tdu->amount=$td->amount;
+							$tdu->active=$td->active;
+							$tdu->transaction_data=$td->id;
+							$tdu->save();
+							$td->active=0;
+							$td->save();
+						}
+					}
+					else
+					{
+						if(in_array($tdlist[$j]['source'], $tlist))
+						{
+
+						}
+						else
+						{
+							$td=TransactionData::where('id','=',$tdlist[$j]['id'])->first();
+							$tdu=new TransactionDataUpdate;
+							$tdu->source=$td->source;
+							$tdu->party=$td->party;
+							$tdu->updated_by=$admin->users->id;
+							$tdu->remarks=$td->remarks;
+							$tdu->amount=$td->amount;
+							$tdu->active=$td->active;
+							$tdu->transaction_data=$td->id;
+							$tdu->save();
+							$td->active=0;
+							$td->save();
+						}
+					}
+				}
+			}
+			catch(Exception $e){
+				DB::rollback();
+			}
+			DB::commit();
+		}
+		else
+		{
+			DB::beginTransaction();
+			try{
+				$t=new Transaction;
+				$t->created_by=$admin->users->id;
+				$t->company=$admin->users->company;
+				$t->name=$trans['name'];
+				$t->account=$trans['account'];
+				$t->type=$trans['type'];
+				$t->status=1;
+				$t->remarks=$trans['remarks'];
+				if($trans['type']=='1')
+				{
+					$t->exp_type=$trans['exp_type'];
+				}
+				else
+				{
+					$t->income_type=$trans['income_type'];
+				}
+				$t->duedate=$trans['duedate'];
+				$t->amount=0;
+				$t->save();
+				$sum=0;
+				for($j=0;$j<count($trans['details']);$j++)
+				{
+					$td=new TransactionData;
+					$td->created_by=$admin->users->id;
+					$td->transaction=$t->id;
+					if($trans['type']==1)
+					{
+						$td->party=$trans['details'][$j]['party'];
+					}
+					else
+					{
+						$td->source=$trans['details'][$j]['source'];
+					}
+					$td->amount=$trans['details'][$j]['amount'];
+					$td->remarks=$trans['details'][$j]['remarks'];
+					$sum+=$trans['details'][$j]['amount'];
+					$td->save();
+				}
+				$t->amount=$sum;
+				$t->save();
+			}
+			catch(Exception $e)
+			{
+				DB::rollback();
+			}
+			DB::commit();
+		}
+	}
+
+	public function get_transaction_details(){
+		$tkn=Request::header('JWT-AuthToken');
+		$date=Carbon::now();
+		$admin=Session::where('token','=',$tkn)->where('expiry','>',$date)->whereHas('users',function($q){
+				$q->where('active','=','1');
+			})->first();
+		$incometypes=IncomeType::where('company','=',$admin->users->company)->where('active','=',1)->orderBy('type')->get();
+		$exptypes=ExpType::where('company','=',$admin->users->company)->where('active','=',1)->orderBy('type')->get();
+		$accs=Account::where('company','=',$admin->users->company)->where('active','=',1)->orderBy('name')->get();
+		$source=Source::where('company','=',$admin->users->company)->where('active','=',1)->orderBy('name')->get();
+		$parties=ThirdParty::where('company','=',$admin->users->company)->where('active','=',1)->orderBy('name')->get();
+		if(Request::get('id')=='0')
+		{
+			return array($exptypes,$incometypes,$accs,$source,$parties,array());
+		}
+		else
+		{
+			$trans=Transaction::where('id','=',Request::get('id'))->
+			with(array('details'=>function($query){
+					$query->where('active','=',1)->with('sourcedets')->with('partydets');
+				}))->first()->toArray();
+			$dlist=array();
+			for($i=0;$i<count($trans['details']);$i++)
+			{
+				if($trans['type']=='1')
+				{
+					array_push($dlist,$trans['details'][$i]['source']);
+				}
+				else
+				{
+					array_push($dlist,$trans['details'][$i]['party']);
+				}
+			}
+			return array($exptypes,$incometypes,$accs,$source,$parties,$trans,$dlist);
+		}
+	}
 
 	public function activate_income(){
 		$iid=Request::get('income_id');
@@ -155,6 +487,7 @@ class AccountsController extends Controller {
 						$is->amount=$income['sources'][$j]['amount'];
 						$is->remarks=$income['sources'][$j]['remarks'];
 						$sum+=$income['sources'][$j]['amount'];
+						array_push($slist,$is->source);
 						$is->save();
 					}
 				}
@@ -380,6 +713,7 @@ class AccountsController extends Controller {
 						$ep->amount=$exp['parties'][$i]['amount'];
 						$ep->remarks=$exp['parties'][$i]['remarks'];
 						$sum+=$exp['parties'][$i]['amount'];
+						array_push($plist,$ep->third_party);
 						$ep->save();
 					}
 				}

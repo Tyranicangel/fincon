@@ -96,3 +96,17 @@ Route::get('/get_income_list', ['middleware'=>'auth','uses'=>'AccountsController
 Route::post('/activate_income', ['middleware'=>'auth','uses'=>'AccountsController@activate_income']);
 
 Route::post('/deactivate_income', ['middleware'=>'auth','uses'=>'AccountsController@deactivate_income']);
+
+Route::get('/get_transaction_details', ['middleware'=>'auth','uses'=>'AccountsController@get_transaction_details']);
+
+Route::post('/save_transaction', ['middleware'=>'auth','uses'=>'AccountsController@save_transaction']);
+
+Route::get('/get_transaction_list', ['middleware'=>'auth','uses'=>'AccountsController@get_transaction_list']);
+
+Route::post('/activate_transaction', ['middleware'=>'auth','uses'=>'AccountsController@activate_transaction']);
+
+Route::post('/deactivate_transaction', ['middleware'=>'auth','uses'=>'AccountsController@deactivate_transaction']);
+
+Route::get('/get_approval_list', ['middleware'=>'auth','uses'=>'HeadController@get_approval_list']);
+
+Route::get('/approve_trans', ['middleware'=>'auth','uses'=>'HeadController@approve_trans']);

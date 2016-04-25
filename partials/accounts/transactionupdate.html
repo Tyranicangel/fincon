@@ -1,0 +1,110 @@
+<div class="container-fluid">
+	<h4>Transactions</h4>
+	<form>
+		<div class="form-group" ng-if="!transaction.id">
+			<label class="radio-inline"><input type="radio" ng-model="transaction.type" value=1 name="type" ng-change="change_type()">Expenditure</label>
+			<label class="radio-inline"><input type="radio" ng-model="transaction.type" value=2 name="type" ng-change="change_type()">Income</label>
+		</div>
+		<div ng-show="transaction.type">
+			<div class="form-group">
+				<label>Name</label>
+				<input type="text" class="form-control" ng-model="transaction.name" required>
+			</div>
+			<div class="form-group">
+				<label>Account</label>
+				<select class="form-control" ng-options="account.id as account.name for account in accounts" ng-model="transaction.account" required>
+					<option value="">Select</option>
+				</select>
+			</div>
+			<div class="form-group" ng-if="transaction.type==1">
+				<label>Type</label>
+				<select class="form-control" ng-options="type.id as type.type for type in exptypes" ng-model="transaction.exp_type" required>
+					<option value="">Select</option>
+				</select>
+			</div>
+			<div class="form-group" ng-if="transaction.type==2">
+				<label>Type</label>
+				<select class="form-control" ng-options="type.id as type.type for type in incometypes" ng-model="transaction.income_type" required>
+					<option value="">Select</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>Due Date</label>
+				<input type="date" class="form-control" ng-model="transaction.duedate" required>
+			</div>
+			<div class="form-group">
+				<label>Remarks</label>
+				<textarea class="form-control" ng-model="transaction.remarks" required></textarea>
+			</div>
+			<div class="form-group">
+				<label>Amount</label>
+				<input type="text" class="form-control" ng-value="transactionamount()" readonly>
+			</div>
+			<div>
+			<h4>Details</h4>
+			<button class="btn btn-primary" ng-click="adddetail()">Add</button>
+			<table class="table" ng-show="transaction.details.length>0">
+				<thead>
+					<tr>
+						<th>Sno</th>
+						<th>Name</th>
+						<th>Amount</th>
+						<th>Remarks</th>
+						<th>Edit</th>
+						<th>Remove</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="detail in transaction.details">
+						<td>{{$index+1}}</td>
+						<td ng-if="transaction.type==2">{{detail.sourcedets.name}}</td>
+						<td ng-if="transaction.type==1">{{detail.partydets.name}}</td>
+						<td>{{detail.amount}}</td>
+						<td>{{detail.remarks}}</td>
+						<td><button class="btn btn-primary btn-xs" ng-click="editdetail(detail)">Edit</button></td>
+						<td><button class="btn btn-danger btn-xs" ng-click="removedetail($index)">Remove</button></td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+			<button type="submit" class="btn btn-primary" ng-click="save_transaction()">Save</button>
+		</div>
+	</form>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form ng-submit="save()">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Source</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Name</label>
+						<select class="form-control" ng-model="maindetail.source" ng-options="source.id as source.name for source in sources | filter:sourcefilter" ng-if="!maindetail.id && transaction.type==2" required>
+							<option value="">Select</option>
+						</select>
+						<select class="form-control" ng-model="maindetail.party" ng-options="party.id as party.name for party in parties | filter:detailfilter" ng-if="!maindetail.id && transaction.type==1" required>
+							<option value="">Select</option>
+						</select>
+						<input type="text" class="form-control" ng-value="maindetail.sourcedets.name" readonly ng-if="maindetail.id && transaction.type==2">
+						<input type="text" class="form-control" ng-value="maindetail.partydets.name" readonly ng-if="maindetail.id && transaction.type==1">
+					</div>
+					<div class="form-group">
+						<label>Remarks</label>
+						<textarea class="form-control" ng-model="maindetail.remarks" required></textarea>
+					</div>
+					<div class="form-group">
+						<label>Amount</label>
+						<input type="text" class="form-control" ng-model="maindetail.amount" required>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

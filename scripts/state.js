@@ -188,6 +188,15 @@ app.config(function($stateProvider,$urlRouterProvider){
 				}
 			}
 		}).
+		state('accounts.transactionupdate',{
+			url: '/accounts/transactionupdate/:id',
+			views:{
+				"content":{
+					templateUrl:"partials/accounts/transactionupdate.html",
+					controller:'AccountsTransactionUpdateCtrl'
+				}
+			}
+		}).
 		state('accounts.password',{
 			url: '/accounts/password',
 			views:{
@@ -211,6 +220,15 @@ app.config(function($stateProvider,$urlRouterProvider){
 				"content":{
 					templateUrl:"partials/head/main.html",
 					controller:'HeadMainCtrl'
+				}
+			}
+		}).
+		state('head.approve',{
+			url: '/head/approve',
+			views:{
+				"content":{
+					templateUrl:"partials/head/approve.html",
+					controller:'HeadApproveCtrl'
 				}
 			}
 		}).

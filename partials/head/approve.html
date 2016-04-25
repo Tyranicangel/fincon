@@ -1,0 +1,110 @@
+<div class="container-fluid">
+	<h4>Transactions</h4>
+	<div class="container-fluid">
+		<table class="table" ng-show="translist.length>0">
+			<thead>
+				<tr>
+					<th>Sno</th>
+					<th>Name</th>
+					<th>Account</th>
+					<th>Category</th>
+					<th>Type</th>
+					<th>Amount</th>
+					<th>Due Date</th>
+					<th>Remarks</th>
+					<th>Balance After Approval</th>
+					<th>View</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="trans in translist">
+					<td>{{$index+1}}</td>
+					<td>{{trans.name}}</td>
+					<td>{{trans.accountdet.name}}</td>
+					<td ng-if="trans.type==1">Expenditure</td>
+					<td ng-if="trans.type==2">Income</td>
+					<td ng-if="trans.type==1">{{trans.exptypedet.type}}</td>
+					<td ng-if="trans.type==2">{{trans.incometypedet.type}}</td>
+					<td>{{trans.amount}}</td>
+					<td>{{trans.duedate}}</td>
+					<td>{{trans.remarks}}</td>
+					<td ng-if="trans.type==1">{{trans.accountdet.balance-trans.amount}}</td>
+					<td ng-if="trans.type==2">{{trans.accountdet.balance+trans.amount}}</td>
+					<td><button class="btn btn-primary btn-xs" ng-click="viewtrans(trans)">View</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<span class="label label-warning" ng-show="translist.length==0">There are no transactions pending</span>
+		<br>
+	</div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Transaction</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label>Name</label>
+					<p class="text-muted">{{maintrans.name}}</p>
+				</div>
+				<div class="form-group">
+					<label>Account</label>
+					<p class="text-muted">{{maintrans.accountdet.name}}</p>
+				</div>
+				<div class="form-group">
+					<label>Catergory</label>
+					<p class="text-muted" ng-if="maintrans.type==1">Expenditure</p>
+					<p class="text-muted" ng-if="maintrans.type==2">Income</p>
+				</div>
+				<div class="form-group">
+					<label>Type</label>
+					<p class="text-muted" ng-if="maintrans.type==1">{{maintrans.exptypedet.type}}</p>
+					<p class="text-muted" ng-if="maintrans.type==2">{{maintrans.incometypedet.type}}</p>
+				</div>
+				<div class="form-group">
+					<label>Due Date</label>
+					<p class="text-muted">{{maintrans.duedate}}</p>
+				</div>
+				<div class="form-group">
+					<label>Amount</label>
+					<p class="text-muted">{{maintrans.amount}}</p>
+				</div>
+				<div class="form-group">
+					<label>Remarks</label>
+					<p class="text-muted">{{maintrans.remarks}}</p>
+				</div>
+				<div class="form-group">
+					<label>Balance After Approval</label>
+					<p class="text-muted" ng-if="maintrans.type==1">{{maintrans.accountdet.balance-maintrans.amount}}</p>
+					<p class="text-muted" ng-if="maintrans.type==2">{{maintrans.accountdet.balance+maintrans.amount}}</p>
+				</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Sno</th>
+							<th>Name</th>
+							<th>Amount</th>
+							<th>Remarks</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="detail in maintrans.details">
+							<td>{{$index+1}}</td>
+							<td ng-if="maintrans.type==2">{{detail.sourcedets.name}}</td>
+							<td ng-if="maintrans.type==1">{{detail.partydets.name}}</td>
+							<td>{{detail.amount}}</td>
+							<td>{{detail.remarks}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" ng-click="approve()">Approve</button>
+			</div>
+		</div>
+	</div>
+</div>

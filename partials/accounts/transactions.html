@@ -1,0 +1,42 @@
+<div class="container-fluid">
+	<h4>Transactions</h4>
+	<div class="container-fluid">
+		<table class="table" ng-show="translist.length>0">
+			<thead>
+				<tr>
+					<th>Sno</th>
+					<th>Name</th>
+					<th>Account</th>
+					<th>Category</th>
+					<th>Type</th>
+					<th>Amount</th>
+					<th>Due Date</th>
+					<th>Remarks</th>
+					<th>Edit</th>
+					<th>Active</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="trans in translist">
+					<td>{{$index+1}}</td>
+					<td>{{trans.name}}</td>
+					<td>{{trans.accountdet.name}}</td>
+					<td ng-if="trans.type==1">Expenditure</td>
+					<td ng-if="trans.type==2">Income</td>
+					<td ng-if="trans.type==1">{{trans.exptypedet.type}}</td>
+					<td ng-if="trans.type==2">{{trans.incometypedet.type}}</td>
+					<td>{{trans.amount}}</td>
+					<td>{{trans.duedate}}</td>
+					<td>{{trans.remarks}}</td>
+					<td><a ui-sref="accounts.transactionupdate({id:trans.id})" class="btn btn-primary btn-xs">Edit</button></td>
+					<td ng-if="trans.active==1"><button class="btn btn-warning btn-xs" ng-click="deactivate(trans)">Deactivate</button></td>
+					<td ng-if="trans.active!=1"><button class="btn btn-success btn-xs" ng-click="activate(trans)">Activate</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<span class="label label-warning" ng-show="translist.length==0">There are no transactions pending</span>
+		<br>
+		<br>
+		<a ui-sref="accounts.transactionupdate({id:'0'})" class="btn btn-primary">Add</a>
+	</div>
+</div>

@@ -33,12 +33,11 @@ class CreateTransactionsTable extends Migration {
 			$table->integer('expenditure')->unsigned();
 			$table->integer('income')->unsigned();
 			$table->integer('approved_by')->unsigned();
-			$table->foreign('approved_by')->references('id')->on('users');
 			$table->timestamp('approved_on');
 			$table->integer('paid_by')->unsigned();
-			$table->foreign('paid_by')->references('id')->on('users');
 			$table->timestamp('paid_on');
 			$table->date('duedate');
+			$table->text('remarks');
 			$table->integer('status')->unsigned();
 		});
 	}
